@@ -20,12 +20,15 @@ let Bird = {
     covering: 'feathers',
     layEgg() {
         console.log("Laying an egg");
-    }
+    },
 };
 
 let Chicken = Object.create(Bird);
+Chicken.makeSound = () => { console.log('Cluck'); };
+
 let Sparrow = Object.create(Bird);
 Sparrow.fly = () => { console.log('Flying'); };
+Sparrow.makeSound = () => { console.log('Tweet'); };
 
 let mamaChicken = Object.create(Chicken);
 let mamaSparrow = Object.create(Sparrow);
