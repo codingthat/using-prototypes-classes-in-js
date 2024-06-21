@@ -12,7 +12,7 @@ class Animal {
 }
 
 class Mammal extends Animal {
-    covering = 'fur'
+    covering = 'fur';
 }
 
 class Wolf extends Mammal {
@@ -51,8 +51,7 @@ class PlatypusBase extends Mammal {
 class Platypus extends eggLayingMixin(PlatypusBase) {}
 
 class BirdBase extends Animal {
-    covering = 'feathers'
-    layEgg() { console.log("Laying an egg"); }
+    covering = 'feathers';
 }
 
 class Bird extends eggLayingMixin(BirdBase) {}
