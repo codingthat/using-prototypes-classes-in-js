@@ -10,22 +10,24 @@ o.spec('deletion and prototype chain demonstration', function() {
     eval(code + ` spy(Wolf, mamaWolf, papaWolf, babyWolf);`); // ← this particular semicolon is essential to avoid ASI creating a bug with the next line
     [ Wolf, mamaWolf, papaWolf, babyWolf ] = spy.calls[0].args
     o('code calls console.log thrice', function() {
-        o(console.log.callCount).equals(3)
+        let startingConsoleLogCallCount = console.log.callCount
+        eval(code) // must re-run here due to shared spies when testing all
+        o(console.log.callCount - startingConsoleLogCallCount).equals(3)
     })
-    let expectedLines = [
-        'Mama Wolf, Papa Wolf, Baby Wolf',
-        'Mama Wolf, Papa Wolf, Baby Wolf',
-        'Mama Wolf, Papa Wolf, Anonymous Wolf',
-    ]
     o('code assigns .name four times', function() {
         o(code.match(/\s*\.name\s?=/mg)?.length).equals(4)
     })
     o('code uses delete as requested, once', function() {
         o(code.match(/\s*delete\sbabyWolf\.name/m)?.length).equals(1)
     })
+    let expectedLines = [
+        'Mama Wolf, Papa Wolf, Baby Wolf',
+        'Mama Wolf, Papa Wolf, Baby Wolf',
+        'Mama Wolf, Papa Wolf, Anonymous Wolf',
+    ]
     for (let i of expectedLines.keys()) {
-        o(`console.log output line #${i} is as expected`, function() {
-            o(console.log.calls[i].args[0]).equals(expectedLines[i])
+        o(`console.log output line #${i+1} is as expected`, function() {
+            o(console.log.calls.at(-expectedLines.length+i).args[0]).equals(expectedLines[i])
         })    
     }
     o('Wolf has covering property with requested value', function() {

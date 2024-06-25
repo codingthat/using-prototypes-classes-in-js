@@ -10,7 +10,9 @@ o.spec('first branching prototype hierarchy', function() {
     eval(code + ` spy(Mammal, Wolf, Lion, mamaWolf, papaWolf, babyWolf);`); // ← this particular semicolon is essential to avoid ASI creating a bug with the next line
     [ Mammal, Wolf, Lion, mamaWolf, papaWolf, babyWolf ] = spy.calls[0].args
     o('code as executed does not end up calling console.log', function() {
-        o(console.log.callCount).equals(0)
+        let startingConsoleLogCallCount = console.log.callCount
+        eval(code) // must re-run here due to shared spies when testing all
+        o(console.log.callCount - startingConsoleLogCallCount).equals(0)
     })
     o('Mammal.makeSound throws requested error', function() {
         o(Mammal.makeSound).throws("makeSound() must be shadowed")

@@ -9,16 +9,22 @@ o.spec('encapsulated instantiation and zoo iteration', function() {
     console.log = o.spy(console.log)
     eval(code + ` spy(zoo, Animal, Mammal, Wolf, Lion, Bird, Chicken, Sparrow, mamaChicken, mamaSparrow, mamaWolf, papaWolf, babyWolf, papaLion);`); // ← this particular semicolon is essential to avoid ASI creating a bug with the next line
     [ zoo, Animal, Mammal, Wolf, Lion, Bird, Chicken, Sparrow, mamaChicken, mamaSparrow, mamaWolf, papaWolf, babyWolf, papaLion ] = spy.calls[0].args
-    o('code as executed calls console.log 12 times', function() {
-        o(console.log.callCount).equals(12)
-    })
-    o(`code as executed logs "Can't fly" five times`, function() {
-        let cantFlyCount = console.log.calls.reduce(function (a, e) {
-            return e.args[0] === "Can't fly"
-                ? a + 1
-                : a
-        }, 0)
-        o(cantFlyCount).equals(5)
+    o.spec('code as executed', function() {
+        let startingConsoleLogCallCount
+        let expectedConsoleLogCallCount = 12
+        o(`calls console.log ${expectedConsoleLogCallCount} times`, function() {
+            startingConsoleLogCallCount = console.log.callCount
+            eval(code) // must re-run here due to shared spies when testing all
+            o(console.log.callCount - startingConsoleLogCallCount).equals(expectedConsoleLogCallCount)
+        })
+        o(`logs "Can't fly" five times`, function() {
+            let cantFlyCount = console.log.calls.slice(-expectedConsoleLogCallCount).reduce(function (a, e) {
+                return e.args[0] === "Can't fly"
+                    ? a + 1
+                    : a
+            }, 0)
+            o(cantFlyCount).equals(5)
+        })    
     })
     o('zoo is an array', function() {
         o(Array.isArray(zoo)).equals(true)

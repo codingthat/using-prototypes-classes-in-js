@@ -10,25 +10,31 @@ o.spec('using private class fields', function() {
     console.log = o.spy(console.log)
     eval(code + ` spy(zoo, Animal, Mammal, Wolf, Lion, eggLayingMixin, PlatypusBase, Platypus, BirdBase, Bird, Chicken, Sparrow, mamaChicken, mamaSparrow, mamaWolf, papaWolf, babyWolf, papaLion, mamaPlatypus);`); // ← this particular semicolon is essential to avoid ASI creating a bug with the next line
     [ zoo, Animal, Mammal, Wolf, Lion, eggLayingMixin, PlatypusBase, Platypus, BirdBase, Bird, Chicken, Sparrow, mamaChicken, mamaSparrow, mamaWolf, papaWolf, babyWolf, papaLion, mamaPlatypus ] = spy.calls[0].args
-    o('code as executed calls console.log 28 times', function() {
-        o(console.log.callCount).equals(28)
-    })
-    let inabilities = {
-        fly: 6,
-        prepareEgg: 4,
-        layEgg: 4,
-    }
-    for (let inability in inabilities) {
-        let expectedCount = inabilities[inability]
-        o(`code as executed logs "Can't ${inability}" ${expectedCount} times`, function() {
-            let cantDoItCount = console.log.calls.reduce(function (a, e) {
-                return e.args[0] === "Can't " + inability
-                    ? a + 1
-                    : a
-            }, 0)
-            o(cantDoItCount).equals(expectedCount)
+    o.spec('code as executed', function() {
+        let startingConsoleLogCallCount
+        let expectedConsoleLogCallCount = 28
+        o(`calls console.log ${expectedConsoleLogCallCount} times`, function() {
+            startingConsoleLogCallCount = console.log.callCount
+            eval(code) // must re-run here due to shared spies when testing all
+            o(console.log.callCount - startingConsoleLogCallCount).equals(expectedConsoleLogCallCount)
         })
-    }
+        let inabilities = {
+            fly: 6,
+            prepareEgg: 4,
+            layEgg: 4,
+        }
+        for (let inability in inabilities) {
+            let expectedCount = inabilities[inability]
+            o(`code as executed logs "Can't ${inability}" ${expectedCount} times`, function() {
+                let cantDoItCount = console.log.calls.slice(-expectedConsoleLogCallCount).reduce(function (a, e) {
+                    return e.args[0] === "Can't " + inability
+                        ? a + 1
+                        : a
+                }, 0)
+                o(cantDoItCount).equals(expectedCount)
+            })
+        }    
+    })
     o('zoo is an array', function() {
         o(Array.isArray(zoo)).equals(true)
     })
@@ -167,8 +173,10 @@ o.spec('using private class fields', function() {
         // this is only because I'm testing as if they
         // were instances, which normally they're not,
         // so here they need to shadow explicitly
-        eggLayingPrototype.eggPrepared = false;
-        eggLayingPrototype.eggsLaidCount = 0;
+        if (eggLayingPrototype) {
+            eggLayingPrototype.eggPrepared = false;
+            eggLayingPrototype.eggsLaidCount = 0;
+        }
     }
     for (let eggLayingType in { Bird, Chicken, Sparrow, Platypus }) {
         let eggLayingPrototype = eval(eggLayingType)

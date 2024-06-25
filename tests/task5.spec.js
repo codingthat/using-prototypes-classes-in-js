@@ -10,7 +10,9 @@ o.spec('extended branching prototype hierarchy', function() {
     eval(code + ` spy(Mammal, Wolf, Lion, Bird, Chicken, Sparrow, mamaChicken, mamaSparrow, mamaWolf, papaWolf, babyWolf);`); // ← this particular semicolon is essential to avoid ASI creating a bug with the next line
     [ Mammal, Wolf, Lion, Bird, Chicken, Sparrow, mamaChicken, mamaSparrow, mamaWolf, papaWolf, babyWolf ] = spy.calls[0].args
     o('code as executed does not end up calling console.log', function() {
-        o(console.log.callCount).equals(0)
+        let startingConsoleLogCallCount = console.log.callCount
+        eval(code) // must re-run here due to shared spies when testing all
+        o(console.log.callCount - startingConsoleLogCallCount).equals(0)
     })
     let animalTypes = {
         Mammal: 'fur',

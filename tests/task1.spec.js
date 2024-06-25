@@ -6,6 +6,7 @@ o.spec('first prototype declaration', function() {
         taskName = require('path').basename(__filename, '.spec.js'),
         code = require('../.test-common')(taskName),
         Wolf
+    console.log = o.spy(console.log)
     eval(code + ` spy(Wolf);`)
     Wolf = spy.calls[0].args[0]
     o('has covering property with requested value', function() {
@@ -14,13 +15,12 @@ o.spec('first prototype declaration', function() {
     o('has makeSound member', function() {
         o(typeof Wolf?.makeSound).equals('function')
     })
-    console.log = o.spy(console.log)
     o('makeSound calls console.log once', function() {
-        o(console.log.callCount).equals(0)
+        let previousCallCount = console.log.callCount
         Wolf.makeSound()
-        o(console.log.callCount).equals(1)
+        o(console.log.callCount).equals(previousCallCount + 1)
     })
     o('makeSound calls console.log with requested value', function() {
-        o(console.log.calls[0].args[0]).equals('Howl')
+        o(console.log.calls.at(-1).args[0]).equals('Howl')
     })
 })

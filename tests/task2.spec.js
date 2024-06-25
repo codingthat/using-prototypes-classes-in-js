@@ -6,6 +6,7 @@ o.spec('first instantiations', function() {
         taskName = require('path').basename(__filename, '.spec.js'),
         code = require('../.test-common')(taskName),
         Wolf, mamaWolf, papaWolf, babyWolf
+    console.log = o.spy(console.log)
     eval(code + ` spy(Wolf, mamaWolf, papaWolf, babyWolf);`); // ← this particular semicolon is essential to avoid ASI creating a bug with the next line
     [ Wolf, mamaWolf, papaWolf, babyWolf ] = spy.calls[0].args
     o('Wolf has covering property with requested value', function() {
@@ -14,14 +15,13 @@ o.spec('first instantiations', function() {
     o('Wolf has makeSound member', function() {
         o(typeof Wolf?.makeSound).equals('function')
     })
-    console.log = o.spy(console.log)
     o('Wolf.makeSound calls console.log once', function() {
         let previousCallCount = console.log.callCount
         Wolf.makeSound()
         o(console.log.callCount).equals(previousCallCount + 1)
     })
     o('Wolf.makeSound calls console.log with requested value', function() {
-        o(console.log.calls[0].args[0]).equals('Howl')
+        o(console.log.calls.at(-1).args[0]).equals('Howl')
     })
     let wolfPack = { mamaWolf, papaWolf, babyWolf }
     for (let wolf in wolfPack) {
@@ -38,7 +38,7 @@ o.spec('first instantiations', function() {
             o(console.log.callCount).equals(previousCallCount + 1)
         })
         o(wolf + '.makeSound calls console.log with requested value', function() {
-            o(console.log.calls[0].args[0]).equals('Howl')
+            o(console.log.calls.at(-1).args[0]).equals('Howl')
         })
     }
 })
