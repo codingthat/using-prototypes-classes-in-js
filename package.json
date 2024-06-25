@@ -1,8 +1,7 @@
 {
   "scripts": {
-    "dev-test-all": "ospec",
     "dev-test": "runtest () { ospec tests/task${1}.spec.js; }; runtest",
-    "test": "runtest () { TEST_TARGET_DIR=src ospec tests/task${1}.spec.js; }; runtest"
+    "test": "runtest () { ( [ -z \"${1}\" ] && ospec) || (TEST_TARGET_DIR=src ospec tests/task${1}.spec.js;) }; runtest"
   },
   "devDependencies": {
     "ospec": "4.1.7"
