@@ -66,9 +66,9 @@ class Chicken extends Bird {
 
 class Sparrow extends Bird {
     fly() {
-        let exfiltratedEggsLaidCount = this.getEggsLaidCount();
-        if (exfiltratedEggsLaidCount > 0) {
-            console.log(`Still flying, ${exfiltratedEggsLaidCount} egg(s) later`);
+        let exposedEggsLaidCount = this.getEggsLaidCount();
+        if (exposedEggsLaidCount > 0) {
+            console.log(`Still flying, ${exposedEggsLaidCount} egg(s) later`);
         } else {
             console.log('Flying');
         }

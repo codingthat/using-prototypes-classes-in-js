@@ -7,7 +7,9 @@ let Animal = {
         throw new Error("makeSound() must be shadowed");
     },
     instantiate() {
-        zoo.push(Object.create(this));
+        let newInstance = Object.create(this);
+        zoo.push(newInstance);
+        return newInstance;
     },
 };
 

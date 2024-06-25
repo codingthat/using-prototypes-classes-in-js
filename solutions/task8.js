@@ -25,21 +25,21 @@ class Lion extends Mammal {
 
 function eggLayingMixin(Base) {
     return class extends Base {
-        #eggsLaidCount = 0;
-        #eggPrepared = false;
+        eggsLaidCount = 0;
+        eggPrepared = false;
 
         prepareEgg() {
-            if (this.#eggPrepared) {
+            if (this.eggPrepared) {
                 throw new Error("Egg already prepared");
             }
-            this.#eggPrepared = true;
+            this.eggPrepared = true;
             console.log("Egg prepared");
         }
 
         layEgg() {
-            this.#eggPrepared = false;
-            this.#eggsLaidCount++;
-            console.log("New egg laid. Total: " + this.#eggsLaidCount);
+            this.eggPrepared = false;
+            this.eggsLaidCount++;
+            console.log("New egg laid. Total: " + this.eggsLaidCount);
         }
     }
 }
